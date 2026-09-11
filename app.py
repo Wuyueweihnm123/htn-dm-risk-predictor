@@ -40,7 +40,6 @@ def load_lime_explainer():
         class_names=["Negative", "Positive"],
         random_state=42,
         verbose=False,
-        discretize_continuous=False,
     )
 
 
