@@ -59,47 +59,44 @@ st.markdown(
     [data-testid="stMainMenu"] {
         display: none !important;
     }
-    [class*="_viewerBadge"], [class*="_profileContainer"], [class*="_container_gzau3"] {
-        display: none !important;
-    }
-    .block-container {padding-top: .45rem; padding-bottom: .45rem; max-width: 1150px;}
+    .block-container {padding-top: .6rem; padding-bottom: .6rem; max-width: 1500px;}
 
     .header-title {
         text-align: center;
         font-family: "Times New Roman", Georgia, serif;
-        font-size: 1.75rem; font-weight: 700; color: #16222e;
+        font-size: 2.1rem; font-weight: 700; color: #16222e;
         letter-spacing: .01em; margin-bottom: .1rem; line-height: 1.2;
     }
     .header-sub {
         text-align: center;
         font-family: "Times New Roman", Georgia, serif;
-        font-size: 1.04rem; color: #4d6479; margin-bottom: .05rem;
+        font-size: 1.2rem; color: #4d6479; margin-bottom: .05rem;
     }
     .header-meta {
-        text-align: center; font-size: .9rem; color: #7c8b99;
+        text-align: center; font-size: 1.02rem; color: #7c8b99;
         margin-bottom: .3rem;
     }
     .header-rule {
-        border: none; border-top: 2px solid #1f4e79; width: 260px;
-        margin: .05rem auto .35rem auto;
+        border: none; border-top: 2px solid #1f4e79; width: 300px;
+        margin: .05rem auto .4rem auto;
     }
 
     .panel {
         background: #ffffff;
         border: 1px solid #e2e9f1;
-        border-radius: 12px;
-        padding: 1rem 1.25rem;
-        box-shadow: 0 2px 10px rgba(31, 78, 121, .07);
+        border-radius: 14px;
+        padding: 1.15rem 1.5rem;
+        box-shadow: 0 2px 12px rgba(31, 78, 121, .08);
     }
     .section-title {
-        font-size: 1.0rem; letter-spacing: .09em; text-transform: uppercase;
+        font-size: 1.18rem; letter-spacing: .09em; text-transform: uppercase;
         color: #1f4e79; font-weight: 700;
         border-bottom: 2px solid #1f4e79;
-        padding-bottom: .3rem; margin-bottom: .6rem;
+        padding-bottom: .35rem; margin-bottom: .7rem;
     }
 
     .risk-card {
-        border-radius: 10px; padding: .75rem 1.1rem; margin-top: .2rem;
+        border-radius: 12px; padding: .9rem 1.3rem; margin-top: .2rem;
         border: 1px solid transparent;
     }
     .risk-low {
@@ -108,29 +105,29 @@ st.markdown(
     .risk-high {
         border-left: 6px solid #c0392b; background: #fdf6f5; border-color: #f1d8d4;
     }
-    .risk-label {font-size: 1.06rem; color: #3b4a58;}
-    .prob-caption {font-size: .96rem; color: #3b4a58; margin-top: .15rem;}
-    .prob-num {font-size: 2.3rem; font-weight: 700; color: #16222e; font-family: "Times New Roman", serif;}
+    .risk-label {font-size: 1.2rem; color: #3b4a58;}
+    .prob-caption {font-size: 1.08rem; color: #3b4a58; margin-top: .15rem;}
+    .prob-num {font-size: 2.8rem; font-weight: 700; color: #16222e; font-family: "Times New Roman", serif;}
 
-    .summary {font-size: .9rem; color: #6d7b89; margin-top: .4rem;}
+    .summary {font-size: 1.02rem; color: #6d7b89; margin-top: .45rem;}
 
     .note {
-        font-size: .95rem; color: #55636f; margin-top: .55rem;
+        font-size: 1.05rem; color: #55636f; margin-top: .6rem;
         line-height: 1.6;
     }
 
     .footer-left {
-        font-size: .86rem; color: #8594a2; text-align: left;
-        border-top: 1px solid #e8ecf1; padding-top: .4rem; margin-top: .55rem;
+        font-size: .98rem; color: #8594a2; text-align: left;
+        border-top: 1px solid #e8ecf1; padding-top: .45rem; margin-top: .6rem;
         line-height: 1.55;
     }
 
-    .stRadio > div {gap: .05rem;}
-    .stNumberInput label, .stRadio label {font-size: 1.06rem; font-weight: 500; color: #2c3a47;}
-    .stNumberInput div[data-baseweb="input"] {max-height: 2.6rem;}
-    .stNumberInput div[data-baseweb="input"] input {font-size: 1.08rem;}
-    .stButton button {font-size: 1.08rem; height: 2.7rem; font-weight: 600;}
-    .stInfo, .stAlert {font-size: .95rem;}
+    .stRadio > div {gap: .08rem;}
+    .stNumberInput label, .stRadio label {font-size: 1.18rem; font-weight: 500; color: #2c3a47;}
+    .stNumberInput div[data-baseweb="input"] {max-height: 2.9rem;}
+    .stNumberInput div[data-baseweb="input"] input {font-size: 1.2rem;}
+    .stButton button {font-size: 1.2rem; height: 3rem; font-weight: 600;}
+    .stInfo, .stAlert {font-size: 1.05rem;}
     </style>
     """,
     unsafe_allow_html=True,
