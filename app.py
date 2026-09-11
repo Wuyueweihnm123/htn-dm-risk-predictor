@@ -279,6 +279,7 @@ def result_panel():
         cached = st.session_state.get("lime_cache")
         lime_html = None
         t_lime = None
+        progress_ph = None
         if cached is not None and cached[0] == lime_key:
             lime_html, t_lime = cached[1], cached[2]
         else:
@@ -315,6 +316,8 @@ def result_panel():
                     "var frs=window.parent.document.querySelectorAll('iframe');"
                     "var fr=frs[frs.length-1];"
                     "if(fr&&fr.style){fr.style.height=(document.body.scrollHeight+28)+'px';}"
+                    "var bars=window.parent.document.querySelectorAll('[data-testid=\"stProgress\"]');"
+                    "if(bars.length){bars[bars.length-1].style.display='none';}"
                     "}catch(e){}})();"
                     "</script>"
                 )
@@ -334,8 +337,6 @@ def result_panel():
             finally:
                 stop_evt.set()
                 bar.progress(100, text="LIME explanation complete")
-                time.sleep(0.3)
-                progress_ph.empty()
                 tick_th.join(timeout=1)
 
         if lime_html is not None:
