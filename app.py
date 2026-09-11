@@ -54,6 +54,10 @@ st.markdown(
         display: none !important;
     }
     #MainMenu {visibility: hidden;}
+    [data-testid="stAppDeployButton"], [data-testid="stStatusWidget"],
+    [data-testid="stMainMenu"], [data-testid="stFooter"] {
+        display: none !important;
+    }
     .block-container {padding-top: .4rem; padding-bottom: .4rem; max-width: 1150px;}
 
     .header-title {
@@ -290,6 +294,14 @@ with right_col:
                 "</script>"
             )
             lime_html = lime_html.replace("</body>", resize_js + "</body>")
+            mobile_css = (
+                "<style>"
+                "::-webkit-scrollbar{display:none;width:0;height:0;}"
+                "*{scrollbar-width:none;-ms-overflow-style:none;}"
+                "@media (max-width:500px){body{zoom:.8;}}"
+                "</style>"
+            )
+            lime_html = lime_html.replace("</head>", mobile_css + "</head>")
             st.components.v1.html(lime_html, height=430, scrolling=False)
             t_lime = time.time() - t_lime0
         except Exception as e:
