@@ -106,10 +106,17 @@ st.markdown(
 
     .summary {font-size: .84rem; color: #7a8794; margin-top: .35rem;}
 
-    .footer {
-        text-align: center; font-size: .82rem; color: #8a97a5;
-        border-top: 1px solid #e8ecf1; padding-top: .35rem; margin-top: .3rem;
+    .note {
+        font-size: .92rem; color: #5f6b78; margin-top: .5rem;
+        line-height: 1.55;
     }
+
+    .footer-left {
+        font-size: .8rem; color: #8a97a5; text-align: left;
+        border-top: 1px solid #e8ecf1; padding-top: .35rem; margin-top: .5rem;
+        line-height: 1.5;
+    }
+
     .stRadio > div {gap: .05rem;}
     .stNumberInput label, .stRadio label {font-size: 1.0rem; font-weight: 500;}
     .stNumberInput div[data-baseweb="input"] {max-height: 2.4rem;}
@@ -186,6 +193,15 @@ with left_col:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
+    st.markdown(
+        "<div class='footer-left'>Model: XGBoost &middot; Features: family_DM, age, BMI, HR, "
+        "smoke &middot; Test AUC = 0.853 &middot; "
+        "For research reference only, not medical advice.</div>",
+        unsafe_allow_html=True,
+    )
+
+    note_ph = st.empty()
+
 with right_col:
     st.markdown(
         "<div class='panel'>"
@@ -253,6 +269,7 @@ with right_col:
         add_script_run_ctx(tick_th)
         tick_th.start()
 
+        t_lime = None
         t_lime0 = time.time()
         try:
             exp = explainer.explain_instance(
@@ -275,14 +292,6 @@ with right_col:
             lime_html = lime_html.replace("</body>", resize_js + "</body>")
             st.components.v1.html(lime_html, height=430, scrolling=False)
             t_lime = time.time() - t_lime0
-            st.caption(
-                "Feature contributions toward 'Positive' (Diabetes): "
-                "positive weights increase the predicted probability, negative decrease it."
-            )
-            st.caption(
-                f"Computation time &mdash; prediction: {t_pred*1000:.0f} ms &middot; "
-                f"LIME explanation: {t_lime:.2f} s"
-            )
         except Exception as e:
             st.error(f"LIME explanation failed: {e}")
         finally:
@@ -291,6 +300,15 @@ with right_col:
             time.sleep(0.3)
             progress_ph.empty()
             tick_th.join(timeout=1)
+
+        lime_time_txt = f"{t_lime:.2f} s" if t_lime is not None else "failed"
+        note_ph.markdown(
+            "<div class='note'>Feature contributions toward 'Positive' (Diabetes): "
+            "positive weights increase the predicted probability, negative decrease it.<br>"
+            f"Computation time &mdash; prediction: {t_pred*1000:.0f} ms &middot; "
+            f"LIME explanation: {lime_time_txt}</div>",
+            unsafe_allow_html=True,
+        )
     else:
         st.info(
             "Enter patient features on the left, "
@@ -298,11 +316,3 @@ with right_col:
         )
 
     st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown(
-    "<div class='footer'>Model: XGBoost &middot; Features: family_DM, age, BMI, HR, "
-    "smoke &middot; Test AUC = 0.853 &middot; "
-    "Prediction is for research reference only and does not constitute "
-    "medical advice.</div>",
-    unsafe_allow_html=True,
-)
