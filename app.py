@@ -1,9 +1,12 @@
 import os
+import time
+import threading
 import numpy as np
 import pandas as pd
 import joblib
 import streamlit as st
 from lime import lime_tabular
+from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 st.set_page_config(
     page_title="HTN/DM Risk Prediction Model",
@@ -228,6 +231,24 @@ with right_col:
             unsafe_allow_html=True,
         )
 
+        progress_ph = st.empty()
+        bar = progress_ph.progress(0, text="Generating LIME explanation, please wait... 0%")
+        stop_evt = threading.Event()
+
+        def _tick():
+            try:
+                for pct in range(3, 97, 3):
+                    if stop_evt.is_set():
+                        break
+                    bar.progress(pct, text=f"Generating LIME explanation, please wait... {pct}%")
+                    time.sleep(0.10)
+            except Exception:
+                pass
+
+        tick_th = threading.Thread(target=_tick, daemon=True)
+        add_script_run_ctx(tick_th)
+        tick_th.start()
+
         try:
             exp = explainer.explain_instance(
                 data_row=features[0],
@@ -244,6 +265,12 @@ with right_col:
             )
         except Exception as e:
             st.error(f"LIME explanation failed: {e}")
+        finally:
+            stop_evt.set()
+            bar.progress(100, text="LIME explanation complete")
+            time.sleep(0.3)
+            progress_ph.empty()
+            tick_th.join(timeout=1)
     else:
         st.info(
             "Enter patient features on the left, "
