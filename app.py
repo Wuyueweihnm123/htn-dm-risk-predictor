@@ -59,6 +59,9 @@ st.markdown(
     [data-testid="stMainMenu"] {
         display: none !important;
     }
+    [class*="_viewerBadge"], [class*="_profileContainer"], [class*="_container_gzau3"] {
+        display: none !important;
+    }
     .block-container {padding-top: .45rem; padding-bottom: .45rem; max-width: 1150px;}
 
     .header-title {
