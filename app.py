@@ -60,6 +60,7 @@ st.markdown(
         display: none !important;
     }
     .block-container {padding-top: .6rem; padding-bottom: .6rem; max-width: 1500px;}
+    [data-testid="stAppViewContainer"] {background: #f4f7fa;}
 
     .header-title {
         text-align: center;
@@ -107,7 +108,9 @@ st.markdown(
     }
     .risk-label {font-size: 1.2rem; color: #3b4a58;}
     .prob-caption {font-size: 1.08rem; color: #3b4a58; margin-top: .15rem;}
-    .prob-num {font-size: 2.8rem; font-weight: 700; color: #16222e; font-family: "Times New Roman", serif;}
+    .prob-num {font-size: 2.8rem; font-weight: 700; font-family: "Times New Roman", serif;}
+    .risk-low .prob-num {color: #1f7a6f;}
+    .risk-high .prob-num {color: #b03a2e;}
 
     .summary {font-size: 1.02rem; color: #6d7b89; margin-top: .45rem;}
 
@@ -122,12 +125,32 @@ st.markdown(
         line-height: 1.55;
     }
 
-    .stRadio > div {gap: .08rem;}
     .stNumberInput label, .stRadio label {font-size: 1.18rem; font-weight: 500; color: #2c3a47;}
-    .stNumberInput div[data-baseweb="input"] {max-height: 2.9rem;}
-    .stNumberInput div[data-baseweb="input"] input {font-size: 1.2rem;}
-    .stButton button {font-size: 1.2rem; height: 3rem; font-weight: 600;}
-    .stInfo, .stAlert {font-size: 1.05rem;}
+    .stNumberInput div[data-baseweb="input"] {
+        max-height: 2.9rem; border-radius: 8px; border-color: #c9d6e2; background: #ffffff;
+    }
+    .stNumberInput div[data-baseweb="input"]:focus-within {
+        border-color: #1f4e79; box-shadow: 0 0 0 1px #1f4e79;
+    }
+    .stNumberInput div[data-baseweb="input"] input {font-size: 1.2rem; font-weight: 500;}
+    .stRadio > div {gap: .1rem;}
+    .stRadio div[role="radio"][aria-checked="true"] {
+        background: #1f4e79; border-color: #1f4e79;
+    }
+    .stButton button {
+        font-size: 1.2rem; height: 3rem; font-weight: 600;
+        border-radius: 8px; border: none;
+        box-shadow: 0 2px 8px rgba(31, 78, 121, .25);
+    }
+    .stButton button:hover {box-shadow: 0 4px 14px rgba(31, 78, 121, .35);}
+    .stInfo {
+        background: #f0f6fb; border: 1px solid #d5e3f0;
+        border-left: 4px solid #1f4e79; border-radius: 8px;
+        padding: .9rem 1.05rem; font-size: 1.05rem; color: #33475b;
+    }
+    .stInfo p {margin: 0;}
+    .stInfo code {background: #e3edf5; color: #1f4e79; border-radius: 4px; padding: .1em .35em;}
+    [data-testid="stTooltipIcon"] svg {fill: #8ba0b5;}
     </style>
     """,
     unsafe_allow_html=True,
