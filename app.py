@@ -231,13 +231,8 @@ with left_col:
 
     note_ph = st.empty()
 
-with right_col:
-    st.markdown(
-        "<div class='panel'>"
-        "<div class='section-title'>Prediction Result</div>",
-        unsafe_allow_html=True,
-    )
-
+@st.fragment
+def result_panel():
     predict_clicked = st.button(
         "Predict", type="primary", use_container_width=True
     )
@@ -280,62 +275,71 @@ with right_col:
             unsafe_allow_html=True,
         )
 
-        progress_ph = st.empty()
-        bar = progress_ph.progress(0, text="Generating LIME explanation, please wait... 0%")
-        stop_evt = threading.Event()
-
-        def _tick():
-            try:
-                for pct in range(3, 97, 3):
-                    if stop_evt.is_set():
-                        break
-                    bar.progress(pct, text=f"Generating LIME explanation, please wait... {pct}%")
-                    time.sleep(0.10)
-            except Exception:
-                pass
-
-        tick_th = threading.Thread(target=_tick, daemon=True)
-        add_script_run_ctx(tick_th)
-        tick_th.start()
-
+        lime_key = tuple(np.round(features[0], 4))
+        cached = st.session_state.get("lime_cache")
+        lime_html = None
         t_lime = None
-        t_lime0 = time.time()
-        try:
-            exp = explainer.explain_instance(
-                data_row=features[0],
-                predict_fn=model.predict_proba,
-                num_features=9,
-                num_samples=1500,
-            )
-            lime_html = exp.as_html()
-            resize_js = (
-                "<script>"
-                "(function(){try{"
-                "var frs=window.parent.document.querySelectorAll('iframe');"
-                "var fr=frs[frs.length-1];"
-                "if(fr&&fr.style){fr.style.height=(document.body.scrollHeight+28)+'px';}"
-                "}catch(e){}})();"
-                "</script>"
-            )
-            lime_html = lime_html.replace("</body>", resize_js + "</body>")
-            mobile_css = (
-                "<style>"
-                "::-webkit-scrollbar{display:none;width:0;height:0;}"
-                "*{scrollbar-width:none;-ms-overflow-style:none;}"
-                "@media (max-width:500px){body{zoom:.8;}}"
-                "</style>"
-            )
-            lime_html = lime_html.replace("</head>", mobile_css + "</head>")
+        if cached is not None and cached[0] == lime_key:
+            lime_html, t_lime = cached[1], cached[2]
+        else:
+            progress_ph = st.empty()
+            bar = progress_ph.progress(0, text="Generating LIME explanation, please wait... 0%")
+            stop_evt = threading.Event()
+
+            def _tick():
+                try:
+                    for pct in range(3, 97, 3):
+                        if stop_evt.is_set():
+                            break
+                        bar.progress(pct, text=f"Generating LIME explanation, please wait... {pct}%")
+                        time.sleep(0.10)
+                except Exception:
+                    pass
+
+            tick_th = threading.Thread(target=_tick, daemon=True)
+            add_script_run_ctx(tick_th)
+            tick_th.start()
+
+            t_lime0 = time.time()
+            try:
+                exp = explainer.explain_instance(
+                    data_row=features[0],
+                    predict_fn=model.predict_proba,
+                    num_features=9,
+                    num_samples=1500,
+                )
+                lime_html = exp.as_html()
+                resize_js = (
+                    "<script>"
+                    "(function(){try{"
+                    "var frs=window.parent.document.querySelectorAll('iframe');"
+                    "var fr=frs[frs.length-1];"
+                    "if(fr&&fr.style){fr.style.height=(document.body.scrollHeight+28)+'px';}"
+                    "}catch(e){}})();"
+                    "</script>"
+                )
+                lime_html = lime_html.replace("</body>", resize_js + "</body>")
+                mobile_css = (
+                    "<style>"
+                    "::-webkit-scrollbar{display:none;width:0;height:0;}"
+                    "*{scrollbar-width:none;-ms-overflow-style:none;}"
+                    "@media (max-width:500px){body{zoom:.8;}}"
+                    "</style>"
+                )
+                lime_html = lime_html.replace("</head>", mobile_css + "</head>")
+                st.session_state["lime_cache"] = (lime_key, lime_html, time.time() - t_lime0)
+                t_lime = time.time() - t_lime0
+            except Exception as e:
+                st.error(f"LIME explanation failed: {e}")
+            finally:
+                stop_evt.set()
+                bar.progress(100, text="LIME explanation complete")
+                time.sleep(0.3)
+                progress_ph.empty()
+                tick_th.join(timeout=1)
+
+        if lime_html is not None:
             st.components.v1.html(lime_html, height=430, scrolling=False)
-            t_lime = time.time() - t_lime0
-        except Exception as e:
-            st.error(f"LIME explanation failed: {e}")
-        finally:
-            stop_evt.set()
-            bar.progress(100, text="LIME explanation complete")
-            time.sleep(0.3)
-            progress_ph.empty()
-            tick_th.join(timeout=1)
 
         lime_time_txt = f"{t_lime:.2f} s" if t_lime is not None else "failed"
         note_ph.markdown(
@@ -350,5 +354,15 @@ with right_col:
             "Enter patient features on the left, "
             "then click **Predict** to view risk."
         )
+
+
+with right_col:
+    st.markdown(
+        "<div class='panel'>"
+        "<div class='section-title'>Prediction Result</div>",
+        unsafe_allow_html=True,
+    )
+
+    result_panel()
 
     st.markdown("</div>", unsafe_allow_html=True)
