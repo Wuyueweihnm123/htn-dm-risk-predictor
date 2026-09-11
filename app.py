@@ -336,7 +336,10 @@ def result_panel():
                 st.error(f"LIME explanation failed: {e}")
             finally:
                 stop_evt.set()
-                bar.progress(100, text="LIME explanation complete")
+                bar.progress(
+                    100,
+                    text="LIME explanation complete" if lime_html is not None else "LIME explanation failed",
+                )
                 tick_th.join(timeout=1)
 
         if lime_html is not None:
