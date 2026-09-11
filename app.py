@@ -305,67 +305,10 @@ with right_col:
             exp = explainer.explain_instance(
                 data_row=features[0],
                 predict_fn=model.predict_proba,
-                num_features=5,
+                num_features=9,
                 num_samples=1500,
-                labels=[0, 1],
             )
-            w0 = dict(exp.local_exp[0])
-            w1 = dict(exp.local_exp[1])
-            proba_arr = np.asarray(exp.predict_proba)
-            p_neg, p_pos = float(proba_arr[0]), float(proba_arr[1])
-            maxw = max(max(abs(v) for v in w1.values()), 1e-8)
-
-            fv_rows = "".join(
-                "<tr>"
-                f"<td style='font:600 12.5px Arial;color:#3b4a58;padding:3px 10px;'>{fn}</td>"
-                f"<td style='font:600 12.5px Arial;color:#16222e;padding:3px 10px;'>{float(features[0][i]):.2f}</td>"
-                "</tr>"
-                for i, fn in enumerate(FEATURE_NAMES)
-            )
-            bar_rows = ""
-            for i, fn in enumerate(FEATURE_NAMES):
-                p = w1.get(i, 0.0)
-                n = w0.get(i, 0.0)
-                lp = abs(p) / maxw * 150.0
-                ln = abs(n) / maxw * 150.0
-                bar_rows += (
-                    "<tr>"
-                    f"<td style='font:600 13px Arial;color:#2c3a47;width:88px;padding:3px 8px 3px 0;'>{fn}</td>"
-                    "<td style='padding:3px 0;'>"
-                    "<div style='position:relative;height:20px;width:320px;'>"
-                    f"<div style='position:absolute;right:50%;top:1px;bottom:1px;width:{ln:.0f}px;background:#3498db;border-radius:3px 0 0 3px;'></div>"
-                    f"<div style='position:absolute;left:50%;top:1px;bottom:1px;width:{lp:.0f}px;background:#f39c12;border-radius:0 3px 3px 0;'></div>"
-                    "<div style='position:absolute;left:50%;top:0;bottom:0;width:1px;background:#9aa7b4;'></div>"
-                    "</div></td>"
-                    "<td style='font:600 13px Arial;color:#2c3a47;padding:3px 0 3px 8px;width:80px;'>"
-                    f"<span style='color:#2980b9;'>{n:.2f}</span> <span style='color:#9aa7b4;'>/</span> "
-                    f"<span style='color:#d68910;'>{p:.2f}</span>"
-                    "</td>"
-                    "</tr>"
-                )
-            neg_pct = p_neg * 100.0
-            pos_pct = p_pos * 100.0
-            lime_html = (
-                "<div style='font-family:Arial,Helvetica,sans-serif;max-width:560px;'>"
-                "<div style='font:700 13px Arial;color:#1f4e79;margin:2px 0 4px;'>Prediction probabilities</div>"
-                "<div style='display:flex;height:16px;border-radius:3px;overflow:hidden;margin-bottom:3px;'>"
-                f"<div style='width:{neg_pct:.1f}%;background:#3498db;'></div>"
-                f"<div style='width:{pos_pct:.1f}%;background:#f39c12;'></div>"
-                "</div>"
-                "<div style='display:flex;font:600 12px Arial;margin-bottom:12px;'>"
-                f"<span style='flex:1;color:#2980b9;'>Negative {p_neg:.2f}</span>"
-                f"<span style='flex:1;text-align:right;color:#d68910;'>Positive {p_pos:.2f}</span>"
-                "</div>"
-                "<div style='font:700 13px Arial;color:#1f4e79;margin:4px 0 2px;'>Feature contributions</div>"
-                "<div style='font:600 11.5px Arial;color:#7c8b99;margin-bottom:4px;'>"
-                "0 class (Negative) &larr; | &rarr; 1 class (Positive) &nbsp;&middot;&nbsp; "
-                "blue = toward Negative, orange = toward Positive"
-                "</div>"
-                f"<table style='border-collapse:collapse;'>{bar_rows}</table>"
-                "<div style='font:700 13px Arial;color:#1f4e79;margin:12px 0 2px;'>Feature Value</div>"
-                f"<table style='border-collapse:collapse;border:1px solid #e2e9f1;border-radius:6px;'>{fv_rows}</table>"
-                "</div>"
-            )
+            lime_html = exp.as_html()
             resize_js = (
                 "<script>"
                 "(function(){try{"
@@ -375,6 +318,7 @@ with right_col:
                 "}catch(e){}})();"
                 "</script>"
             )
+            lime_html = lime_html.replace("</body>", resize_js + "</body>")
             mobile_css = (
                 "<style>"
                 "::-webkit-scrollbar{display:none;width:0;height:0;}"
@@ -382,11 +326,8 @@ with right_col:
                 "@media (max-width:500px){body{zoom:.8;}}"
                 "</style>"
             )
-            full_html = (
-                "<html><head>" + mobile_css + "</head><body style='margin:0;'>"
-                + lime_html + resize_js + "</body></html>"
-            )
-            st.components.v1.html(full_html, height=430, scrolling=False)
+            lime_html = lime_html.replace("</head>", mobile_css + "</head>")
+            st.components.v1.html(lime_html, height=430, scrolling=False)
             t_lime = time.time() - t_lime0
         except Exception as e:
             st.error(f"LIME explanation failed: {e}")
