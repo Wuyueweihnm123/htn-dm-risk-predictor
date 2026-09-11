@@ -25,7 +25,9 @@ MODEL_AUC = 0.853
 
 @st.cache_resource
 def load_model():
-    return joblib.load(MODEL_PATH)
+    m = joblib.load(MODEL_PATH)
+    m.predict_proba(np.zeros((1, len(FEATURE_NAMES))))
+    return m
 
 
 @st.cache_resource
@@ -196,9 +198,11 @@ with right_col:
     )
 
     if predict_clicked:
+        t_pred0 = time.time()
         features = np.array([[float(family_dm), float(age), float(bmi),
                               float(hr), float(smoke)]])
         proba = model.predict_proba(features)[0][1]
+        t_pred = time.time() - t_pred0
         proba_pct = proba * 100.0
 
         if proba >= 0.5:
@@ -249,6 +253,7 @@ with right_col:
         add_script_run_ctx(tick_th)
         tick_th.start()
 
+        t_lime0 = time.time()
         try:
             exp = explainer.explain_instance(
                 data_row=features[0],
@@ -259,9 +264,14 @@ with right_col:
             )
             lime_html = exp.as_html()
             st.components.v1.html(lime_html, height=290, scrolling=True)
+            t_lime = time.time() - t_lime0
             st.caption(
                 "Feature contributions toward 'Positive' (Diabetes): "
                 "positive weights increase the predicted probability, negative decrease it."
+            )
+            st.caption(
+                f"Computation time &mdash; prediction: {t_pred*1000:.0f} ms &middot; "
+                f"LIME explanation: {t_lime:.2f} s"
             )
         except Exception as e:
             st.error(f"LIME explanation failed: {e}")
