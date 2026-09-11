@@ -185,39 +185,39 @@ with left_col:
     )
 
     family_dm = st.radio(
-        "Family History of Diabetes Mellitus (family_DM)",
+        "Family History of Diabetes Mellitus",
         options=[0, 1],
         format_func=lambda x: "Yes" if x == 1 else "No",
         index=0,
         horizontal=True,
-        help="No = without family history of diabetes; Yes = with family history of diabetes",
+        help="Family History of Diabetes Mellitus (family_DM): No = without family history of diabetes; Yes = with family history of diabetes",
     )
 
     age = st.number_input(
-        "Age (age)",
+        "Age",
         min_value=18, max_value=110, value=45, step=1,
-        help="Age in years (18-110)",
+        help="Age (age) in years, 18-110",
     )
 
     bmi = st.number_input(
         "BMI",
         min_value=0.0, max_value=100.0, value=24.0, step=0.1,
-        help="Body Mass Index, kg/m² (0-100)",
+        help="Body Mass Index (BMI), kg/m², 0-100",
     )
 
     hr = st.number_input(
-        "Heart Rate (HR)",
+        "Heart Rate",
         min_value=0, max_value=300, value=72, step=1,
-        help="Resting heart rate, beats per minute (0-300)",
+        help="Resting heart rate (HR), beats per minute, 0-300",
     )
 
     smoke = st.radio(
-        "Smoking Status (smoke)",
+        "Smoking Status",
         options=[0, 1],
         format_func=lambda x: "Yes" if x == 1 else "No",
         index=0,
         horizontal=True,
-        help="No = not smoking; Yes = currently smoking",
+        help="Smoking Status (smoke): No = not smoking; Yes = currently smoking",
     )
 
     st.markdown("</div>", unsafe_allow_html=True)
