@@ -51,6 +51,7 @@ def load_lime_explainer():
         class_names=["Negative", "Positive"],
         random_state=42,
         verbose=False,
+        discretize_continuous=False,  # 跳过连续特征离散化（树模型影响极小）
     )
 
 
@@ -270,7 +271,6 @@ with right_col:
                 num_features=5,
                 num_samples=1500,          # 5000→1500：扰动采样减少70%
                 labels=[1],
-                discretize_continuous=False,  # 跳过连续特征离散化（树模型影响极小）
             )
             # Interactive LIME web panel (same style as Jupyter notebook)
             lime_html = exp.as_html()
