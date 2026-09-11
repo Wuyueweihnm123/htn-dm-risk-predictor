@@ -263,7 +263,17 @@ with right_col:
                 labels=[1],
             )
             lime_html = exp.as_html()
-            st.components.v1.html(lime_html, height=290, scrolling=True)
+            resize_js = (
+                "<script>"
+                "(function(){try{"
+                "var frs=window.parent.document.querySelectorAll('iframe');"
+                "var fr=frs[frs.length-1];"
+                "if(fr&&fr.style){fr.style.height=(document.body.scrollHeight+28)+'px';}"
+                "}catch(e){}})();"
+                "</script>"
+            )
+            lime_html = lime_html.replace("</body>", resize_js + "</body>")
+            st.components.v1.html(lime_html, height=430, scrolling=False)
             t_lime = time.time() - t_lime0
             st.caption(
                 "Feature contributions toward 'Positive' (Diabetes): "
